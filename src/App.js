@@ -5,28 +5,50 @@ import TodoInput from "./components/TodoInput";
 import TodoList from "./components/TodoList";
 export default class App extends Component {
   state = {
-    item: [
-      { id: 1, title: "wake up" },
-      { id: 2, title: "make breakfast" },
-    ],
+    items: [],
     id: uuidv4(),
     item: "",
     editItem: false,
   };
   handleChange = (e) => {
-    console.log("handle Change ");
+    this.setState({
+      item: e.target.value,
+    });
   };
   handleSubmit = (e) => {
-    console.log("handle Submit ");
+    e.preventDefault();
+    const newItem = {
+      id: this.state.id,
+      title: this.state.item,
+    };
+    const updatedItem = [...this.state.items, newItem];
+    this.setState({
+      items: updatedItem,
+      item: "",
+      id: uuidv4(),
+      editItem: false,
+    });
   };
   clearList = () => {
-    console.log("clear list");
+    this.setState({
+      items: [],
+    });
   };
   handleDelete = (id) => {
-    console.log("delete");
+    const filteredItems = this.state.items.filter((item) => item.id !== id);
+    this.setState({
+      items: filteredItems,
+    });
   };
   handleEdit = (id) => {
-    console.log("edit");
+    const filteredItems = this.state.items.filter((item) => item.id !== id);
+    const selectedItem = this.state.items.find((item) => item.id === id);
+    this.setState({
+      items: filteredItems,
+      item: selectedItem.title,
+      id: id,
+      editItem: true,
+    });
   };
   render() {
     return (
@@ -41,7 +63,7 @@ export default class App extends Component {
               editItem={this.state.editItem}
             />
             <TodoList
-              item={this.state.item}
+              items={this.state.items}
               clearList={this.clearList}
               handleDelete={this.handleDelete}
               handleEdit={this.handleEdit}
